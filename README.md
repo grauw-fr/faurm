@@ -6,7 +6,7 @@ that aims to enhance the already great [Remote Form](https://svelte.dev/docs/kit
 It brings an opinionated way of handling backend typed validation for your exported form functions.
 ```js
 import z from 'zod/v4';
-import {faurm} from '@grauw-fr/faurm';
+import {faurm} from 'faurm';
 
 const loginFormSchema = z.object({
     email: z.email('The email field must be a valid email address.'),
