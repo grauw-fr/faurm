@@ -11,7 +11,7 @@
         </ul>
         <ul>
             <li><a href="/exemples">Exemples</a></li>
-            <li><a href="https://github.com/grauw-fr/faurm">Github</a></li>
+            <li><a href="https://github.com/grauw-fr/faurm" target="_blank" rel="nofollow">Github</a></li>
         </ul>
     </nav>
 </header>
