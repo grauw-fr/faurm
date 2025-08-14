@@ -15,9 +15,6 @@ const config = {
         experimental: {
             remoteFunctions: true
         },
-        alias: {
-          $docs: './src/docs'
-        }
 	}
 };
 
