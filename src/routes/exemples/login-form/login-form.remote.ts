@@ -1,5 +1,5 @@
 import z from 'zod/v4';
-import {faurm} from 'faurm';
+import {faurm, faurmSuccess} from '$lib/faurm/index.js';
 
 const loginFormSchema = z.object({
     email: z.email('The email field must be a valid email address.'),
@@ -8,6 +8,8 @@ const loginFormSchema = z.object({
 });
 
 
-export const login = faurm(loginFormSchema, data => {
-    // The rest of the owl
+export const login = faurm(loginFormSchema, (data) => {
+    // TODO: Run your logic here.
+
+    return faurmSuccess.ok(data);
 });

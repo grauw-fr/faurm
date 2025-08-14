@@ -1,5 +1,4 @@
 # Faurm
-# VERY WIP 
 __faurm__ (pronounced like "form" or "foarm") is a simple library
 that aims to enhance the already great [Remote Form](https://svelte.dev/docs/kit/remote-functions#form) from the even greater [SvelteKit](https://svelte.dev/docs/kit/introduction) 
 
@@ -41,6 +40,7 @@ npm install @grauw-fr/faurm
 
 ## Features
 - Typesafe backend validation of forms, using [standard schemas](https://github.com/standard-schema/standard-schema)
+- [ ] Write an enhancer
 - [ ] Devise ways to handle more complexe validation schemas (file inputs, nested schemas, etc)
 - [ ] Add a form state manager
 - [ ] Make Faurm work with (Formsnap)[https://formsnap.dev/docs]
