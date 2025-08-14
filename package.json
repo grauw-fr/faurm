@@ -67,6 +67,7 @@
   "dependencies": {
     "@picocss/pico": "^2.1.1",
     "@sveltejs/adapter-node": "^5.2.15",
+    "faurm": "^0.0.4",
     "zod": "^4.0.17"
   }
 }
