@@ -6,8 +6,8 @@
     ]
 </script>
 <Metadata
-        title="Remote form function library for SvelteKit"
-        description="SvelteKit remote form function, now with with validation and more !"
+        title="Exemples"
+        description="Exemples using faurm, a remote form function library for SvelteKit"
 ></Metadata>
 
 <section>

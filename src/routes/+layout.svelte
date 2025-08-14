@@ -7,7 +7,7 @@
 <header>
     <nav class="container">
         <ul>
-            <li><strong>FAURM <small>by GRAUW.</small></strong></li>
+            <li><a href="/" id="faurm__logo"><strong>FAURM <small>by GRAUW.</small></strong></a></li>
         </ul>
         <ul>
             <li><a href="/exemples">Exemples</a></li>
@@ -25,3 +25,15 @@
     </small>
 </footer>
 
+
+<style>
+    #faurm__logo {
+        text-decoration: none;
+        color: white;
+    }
+
+    #faurm__logo:hover, #faurm__logo:focus, #faurm__logo:hover, #faurm__logo:visited {
+        text-decoration: none;
+        color: white;
+    }
+</style>

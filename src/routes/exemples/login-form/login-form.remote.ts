@@ -1,5 +1,5 @@
 import z from 'zod/v4';
-import {faurm, faurmSuccess} from '$lib/faurm/index.js';
+import {faurm, faurmSuccess} from 'faurm';
 
 const loginFormSchema = z.object({
     email: z.email('The email field must be a valid email address.'),
