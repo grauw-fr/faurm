@@ -1,5 +1,5 @@
 <script>
-    import Metadata from "$lib/docs/metadata.svelte";
+    import Metadata from "$docs/metadata.svelte";
 
     const exemples = [
         {title: "Simple login form", description: "A simple login form to show you the basics", url: "/exemples/login-form"},

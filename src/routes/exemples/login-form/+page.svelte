@@ -1,6 +1,6 @@
 <script lang="ts">
     import {login} from './login-form.remote.js'
-    import Metadata from "$lib/docs/metadata.svelte";
+    import Metadata from "$docs/metadata.svelte";
 
     const errors = $derived(
         login.result?.type === "failure" &&
