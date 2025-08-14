@@ -60,6 +60,6 @@ Please make sure to update tests as appropriate.
 
 ## Who are we ?
 We are the french digital agency GRAUW.
-We love to build website and app, mainly using Laravel, Vue and SvelteKit.
+We love to build websites and apps, mainly using Laravel, Vue and SvelteKit.
 Feel free to reach out ! 
 [GRAUW.](https://grauw.fr/)
