@@ -1,6 +1,8 @@
-import {faurm, faurmSuccess, faurmValidationFailure} from "$lib/faurm/index.js";
+import { faurm } from "./faurm/server.js";
+import { faurmSuccess, faurmValidationFailure } from "./faurm/shared.js";
 
-export {faurm,
+export {
+    faurm,
     faurmSuccess,
     faurmValidationFailure
 }
