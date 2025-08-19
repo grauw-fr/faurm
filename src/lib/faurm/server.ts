@@ -19,9 +19,7 @@ export const faurm = <Schema extends StandardSchemaV1, Output>(
     fn: FaurmExecutor<Schema, Output>
 ): RemoteForm<FaurmResult<Schema, Output>> => {
     return form<FaurmResult<Schema, Output>>(async (data) => {
-
         let result = await validateFormData(validator, data)
-
         if (result?.errors) return faurmValidationFailure<Schema>(result.errors);
 
         return fn(data);
