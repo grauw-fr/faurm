@@ -3,17 +3,18 @@
     import {loginFormSchema} from "./schemas.js";
     import {useFaurm} from "$lib/faurm/client.svelte.js";
 
-
-
-    const {data, errors, enhance} = useFaurm({
+    const {data, errors, enhance, timers} = useFaurm({
         validator: loginFormSchema,
         initialData: {
             email: 'alexandre',
         },
-        remoteFn: login
+        remoteFn: login,
+        onSubmit(){},
+        onSuccess(){},
+        onError(){}
     })
-
 </script>
+
 <form {...enhance}>
     <fieldset>
         <label>
@@ -49,7 +50,20 @@
                 </small>
             {/if}
         </label>
-
     </fieldset>
-    <input type="submit" value="Sign In"/>
+
+    <input type="submit" value="Sign In" disabled={timers.delayed}/>
+    {#if timers.submitting}
+        <!-- Can be flashy if the response is near instant. -->
+    {/if}
+
+    {#if timers.delayed}
+        <!-- Triggers after a small delay to indicate loading -->
+        <p>Loading...</p>
+    {/if}
+    {#if timers.timeout}
+        <!-- Triggers after a longer delay -->
+        <p>Wow, this is pretty long...</p>
+    {/if}
 </form>
+

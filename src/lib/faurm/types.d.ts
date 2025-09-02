@@ -2,27 +2,38 @@ import type {StandardSchemaV1} from "@standard-schema/spec";
 
 
 export namespace Faurm {
-    type FaurmData<Schema> = Partial<StandardSchemaV1.InferInput<Schema>>
-    type FaurmValidationError<Schema> = {
-        value?: undefined
-        errors: Partial<Record<keyof StandardSchemaV1.InferInput<Schema>, string[]>>
+    namespace Validator {
+        type Error<Schema> = {
+            value?: undefined
+            errors: Partial<Record<keyof StandardSchemaV1.InferInput<Schema>, string[]>>
+        }
+
+        type Success<Schema> = {
+            errors?: undefined
+            value: StandardSchemaV1.InferOutput<Schema>
+        }
+        type Result<Schema> = | Error<Schema> | Success<Schema>
     }
 
-    type FaurmValidationSuccess<Schema> = {
-        errors?: undefined
-        value: StandardSchemaV1.InferOutput<Schema>
+    namespace Remote {
+        type Executor<Schema extends StandardSchemaV1, Output> = (data: FormData) => Faurm.Result<Schema, Output>;
     }
 
-    type FaurmValidationResult<Schema> = | FaurmValidationError<Schema> | FaurmValidationSuccess<Schema>
+    namespace Results {
+        type ValidationError<Schema> = {
+            type: "failure",
+            status: 422,
+            errors: Faurm.Validator.Error<Schema>['errors']
+        }
+
+        type NoContent = { type: "success", status: 204 }
+        type Created<Output> = { type: "success", status: 201, data: Output }
+        type Ok<Output> = { type: "success", status: 200, data: Output }
+    }
+
+    type Result<Schema, Output> = | Faurm.Results.ValidationError<Schema> | Faurm.Results.NoContent | Faurm.Results.Created<Output> | Faurm.Results.Ok<Output>
+
+    namespace Helpers {
+        type MaybePromise<T> = T | Promise<T>;
+    }
 }
-
-
-
-type MaybePromise<T> = T | Promise<T>;
-
-type FaurmExecutor<Schema extends StandardSchemaV1, Output = any> = (data: FormData) => FaurmResult<Schema, Output>;
-
-type FaurmResult<Schema extends StandardSchemaV1, Output = any> =
-    | { type: "failure", status: 422, errors:  Faurm.FaurmValidationError<Schema>['errors']}
-    | { type: "success", status: 204 }
-    | { type: "success", status: 200 | 201, data: Output };
