@@ -18,8 +18,8 @@ import {faurmValidationFailure, validateFormData} from "$lib/faurm/shared.js";
 export const faurm = <Schema extends StandardSchemaV1, Output>(
     validator: Schema,
     fn: Faurm.Remote.Executor<Schema, Output>
-): RemoteForm<Faurm.Result.Any<Schema, Output>> => {
-    return form<Faurm.Result.Any<Schema, Output>>(async (data) => {
+): RemoteForm<Faurm.Result<Schema, Output>> => {
+    return form<Faurm.Result<Schema, Output>>(async (data) => {
         let result = await validateFormData(validator, data)
         if (result?.errors) return faurmValidationFailure<Schema>(result.errors);
 

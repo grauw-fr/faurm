@@ -31,7 +31,7 @@ export namespace Faurm {
         type Ok<Output> = { type: "success", status: 200, data: Output }
     }
 
-    type Result<Schema, Output> = | Faurm.Results.ValidationError<Schema> | Faurm.Results.NoContent | Faurm.Results.Created<Output> | Faurm.Results.Ok<Output>
+    type Result<Schema, Output> = | Faurm.Results.ValidationError<Schema> | Faurm.Results.NoContent | Faurm.Results.Created<Output> | Faurm.Results.Ok<Output> | void
 
     namespace Helpers {
         type MaybePromise<T> = T | Promise<T>;
