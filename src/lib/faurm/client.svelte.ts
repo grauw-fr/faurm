@@ -1,8 +1,9 @@
 import type {StandardSchemaV1} from "@standard-schema/spec";
 import {getContext, setContext} from "svelte";
 import type {RemoteForm} from "@sveltejs/kit";
-import type {Faurm} from "$lib/faurm/types.js";
-import {faurmValidationFailure, validateFormData} from "$lib/faurm/shared.js";
+
+import type {Faurm} from "./types.js";
+import {faurmResponse, validateFormData} from "./shared.js";
 
 const FORM_STATE_CONTEXT_KEY = Symbol('FAURM_STATE_CONTEXT_KEY');
 
@@ -109,7 +110,7 @@ class FaurmContext<
                 let result = await validateFormData(this.validator, data);
                 if (result.errors) {
                     this.handleValidationFailure(
-                        faurmValidationFailure(result.errors)
+                        faurmResponse.validationFailure(result.errors)
                     );
                     return;
                 }

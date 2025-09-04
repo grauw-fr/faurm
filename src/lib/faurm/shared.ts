@@ -1,5 +1,5 @@
 import type {StandardSchemaV1} from "@standard-schema/spec";
-import type {Faurm} from "$lib/faurm/types.js";
+import type {Faurm} from "./types.js";
 
 
 export const validateFormData =
@@ -35,13 +35,14 @@ export const validateFormData =
 
         return {errors} as Faurm.Validator.Error<Schema>;
     }
-
-export const faurmSuccess = {
+export const faurmResponse = {
+    //Successes
     noContent: (): Faurm.Results.NoContent => ({type: "success", status: 204}),
     ok: <T>(data: T): Faurm.Results.Ok<T> => ({type: "success", status: 200, data}),
     created: <T>(data: T): Faurm.Results.Created<T> => ({type: "success", status: 201, data}),
-};
 
-export const faurmValidationFailure = <Schema extends StandardSchemaV1>(
-    errors: Partial<Record<keyof StandardSchemaV1.InferInput<Schema>, string[]>>
-): Faurm.Results.ValidationError<Schema> => ({type: "failure", status: 422, errors});
+    //Errors
+    validationFailure: <Schema extends StandardSchemaV1>(
+        errors: Partial<Record<keyof StandardSchemaV1.InferInput<Schema>, string[]>>
+    ): Faurm.Results.ValidationError<Schema> => ({type: "failure", status: 422, errors})
+}

@@ -16,7 +16,7 @@ export namespace Faurm {
     }
 
     namespace Remote {
-        type Executor<Schema extends StandardSchemaV1, Output> = (data: FormData) => Faurm.Result<Schema, Output>;
+        type Executor<Schema extends StandardSchemaV1, Output> = (data: FormData) => MaybePromise<Faurm.Result<Schema, Output>>;
     }
 
     namespace Results {

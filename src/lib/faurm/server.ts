@@ -1,9 +1,9 @@
-import type {Faurm} from "$lib/faurm/types.d.ts";
 import {type RemoteForm} from '@sveltejs/kit';
 import {form} from '$app/server';
-
 import type {StandardSchemaV1} from '@standard-schema/spec';
-import {faurmValidationFailure, validateFormData} from "$lib/faurm/shared.js";
+
+import type {Faurm} from "./types.d.ts";
+import {faurmResponse, validateFormData} from "./shared.js";
 
 
 /**
@@ -21,7 +21,7 @@ export const faurm = <Schema extends StandardSchemaV1, Output>(
 ): RemoteForm<Faurm.Result<Schema, Output>> => {
     return form<Faurm.Result<Schema, Output>>(async (data) => {
         let result = await validateFormData(validator, data)
-        if (result?.errors) return faurmValidationFailure<Schema>(result.errors);
+        if (result?.errors) return faurmResponse.validationFailure<Schema>(result.errors);
 
         return fn(data);
     });

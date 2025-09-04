@@ -190,6 +190,7 @@ The timers object can be used to indicate loading state. You can use it to disab
 ## Features
 - [X] Typesafe backend validation of forms, using [standard schemas](https://github.com/standard-schema/standard-schema)
 - [X] Typesafe form enhancer with callbacks and timers
+- [X] Integrate new Svelte Kit form functionalities ? Client driven single flight mutation could be used 
 - [ ] Extract constraints from our validation
 - [ ] Devise ways to handle more complexe validation schemas (file inputs, nested schemas, etc.)
 - [ ] Draw the rest of the owl
