@@ -58,6 +58,9 @@ class FaurmContext<
         this.data = $state(opts.initialData ?? {})
         this.errors = $state({})
 
+        if(this.remoteFn?.result?.status === 422){
+            this.handleValidationFailure(this.remoteFn.result)
+        }
 
         $effect.pre(() => {
             if (this.remoteFn.result?.status === 422) {
