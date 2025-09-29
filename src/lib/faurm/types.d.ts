@@ -1,6 +1,3 @@
-import type {StandardSchemaV1} from "@standard-schema/spec";
-
-
 export namespace Faurm {
     namespace Validator {
         type Error<Schema> = {

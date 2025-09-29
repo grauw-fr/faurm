@@ -12,7 +12,7 @@ npm install faurm
 
 Write a schema of you file using any [standard schema compliant library](https://standardschema.dev/)
 ```js
-// /src/lib/schemas.ts
+// /src/lib/schema.ts
 export const loginFormSchema = z.object({
     email: z.email('The email field must be a valid email address.'),
     password: z.string()
@@ -24,7 +24,7 @@ Pass the schema to an exported remote faurm function.
 ```ts
 // /src/lib/auth.remote.ts
 import {faurm} from 'faurm';
-import {loginFormSchema} from '$lib/schemas.ts'
+import {loginFormSchema} from '$lib/schema.ts'
 
 export const login = faurm(loginFormSchema, (data: FormData) => {
     // The rest of the owl
@@ -89,7 +89,7 @@ Enhance your form using the useFaurm helper. You get front-end validation out th
 
 <script lang="ts">
     import {login} from "$lib/auth.remote";
-    import {loginFormSchema} from '$lib/schemas.ts'
+    import {loginFormSchema} from '$lib/schema.ts'
 
     import {useFaurm} from "faurm";
 
@@ -125,7 +125,7 @@ Event handlers allow you to react to your form submissions and their potential r
 
 <script lang="ts">
     import {login} from "$lib/auth.remote";
-    import {loginFormSchema} from '$lib/schemas.ts'
+    import {loginFormSchema} from '$lib/schema.ts'
 
     import {useFaurm} from "faurm";
 
@@ -169,7 +169,7 @@ The timers object can be used to indicate loading state. You can use it to disab
 
 <form {...enhance}>
     <!-- The rest of the owl -->
-    <input type="submit" value="Sign In" disabled={timers.delayed}/>
+    <input type="submit" value="Create" disabled={timers.delayed}/>
     {#if timers.submitting}
         <!-- Can be flashy if the response is near instant. -->
     {/if}
