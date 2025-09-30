@@ -1,7 +1,14 @@
 # Faurm
 __faurm__ (pronounced like "form" or "foarm") is a simple library
 that aims to enhance the already great [Remote Form](https://svelte.dev/docs/kit/remote-functions#form) from the even greater [SvelteKit](https://svelte.dev/docs/kit/introduction)
-It brings a way to handle backend and frontend validation for your exported form functions.
+It's a form wrapper around SvelteKit preflight front-end validation. It adds DX niceties, namely timers, callbacks and more.
+
+## Before we begin
+Remote form function are still in their infancy. 
+This library's API is subject to frequent breaking changes.
+
+We still need a way to trigger validation errors from the function itself for this to be truly helpful.
+
 
 ## Installation
 ```shell
@@ -12,183 +19,219 @@ npm install faurm
 
 Write a schema of you file using any [standard schema compliant library](https://standardschema.dev/)
 ```js
-// /src/lib/schema.ts
-export const loginFormSchema = z.object({
-    email: z.email('The email field must be a valid email address.'),
-    password: z.string()
-        .min(1, 'The password is required')
+// ./lib/schema.ts
+import z from "zod/v4";
+
+export const createTodoFormSchema = z.object({
+    title: z.string('The title field must be a string.')
+        .min(1, 'The title field is required'),
 });
 ```
 
-Pass the schema to an exported remote faurm function.  
+Pass your schema to a remote form function.  
 ```ts
-// /src/lib/auth.remote.ts
-import {faurm} from 'faurm';
-import {loginFormSchema} from '$lib/schema.ts'
+// ./lib/todos.remote.ts
+import {createTodoFormSchema} from "./schema.js";
+import {form} from "$app/server";
 
-export const login = faurm(loginFormSchema, (data: FormData) => {
-    // The rest of the owl
+export const createTodo = form(createTodoFormSchema, (data) => {
+    return {
+        ...data
+    }
 });
 ```
 
-Use it as you would a regular remote function.  
+Enhance your form using the useFaurm wrapper.
 ```sveltehtml
 <script lang="ts">
-    import {login} from "$lib/auth.remote";
-</script>
+    import {createTodo} from "./lib/todos.remote.js";
+    import {useFaurm} from "$lib/index.js";
 
-<form {...login}>
-    <fieldset>
-        <label>
-            Email
-            <input name="email" /> 
-            <!-- The rest of the owl -->
-```
-
-The library uses the "result" to communicate back validation failure. The "result" property has the following typesafe structure
-```ts
-    type FaurmResult<Schema extends StandardSchemaV1, Output = any> =
-    | { type: "failure", status: 422, errors:  Faurm.FaurmValidationError<Schema>['errors']}
-    | { type: "success", status: 204 }
-    | { type: "success", status: 200 | 201, data: Output };
-```
-
-The library uses the "result" to communicate back validation results. The "result" property has the following typesafe structure
-```sveltehtml
-<script lang="ts">
-    import {login} from "$lib/auth.remote";
-    
-    const errors = $derived(
-            login.result?.type === "failure" &&
-            login.result.status === 422 &&
-            login.result.errors || {}
-    )
-</script>
-
-<form {...login}>
-    <fieldset>
-        <label>
-            Email
-            <input
-                name="email"
-                placeholder="Email"
-                aria-invalid={!!errors['email'] || null}
-                aria-describedby={errors['email'] ? 'invalid-email-helper' : null}
-            />
-            {#if errors['email']}
-                <small id="invalid-email-helper">
-                    {errors['email'].join(', ')}
-                </small>
-            {/if}
-        </label>
-        <!-- The rest of the owl -->
-```
-
-Enhance your form using the useFaurm helper. You get front-end validation out the box.
-```sveltehtml
-
-<script lang="ts">
-    import {login} from "$lib/auth.remote";
-    import {loginFormSchema} from '$lib/schema.ts'
-
-    import {useFaurm} from "faurm";
-
-    const {data, errors, enhance} = useFaurm({
-        validator: loginFormSchema,
+    const form = useFaurm(createTodo, {
         initialData: {
-            email: 'faurm@grauw.fr',
+            title: "A first todo"
         },
-        remoteFn: login
     })
+
+    const {data, issues, enhance} = $derived(form);
+    $inspect(data, issues);
 </script>
 
 <form {...enhance}>
-    <fieldset>
-        <label>
-            Email
-            <input
-                    name="email"
-                    placeholder="Email"
-                    aria-invalid={!!errors['email'] || null}
-                    aria-describedby={errors['email'] ? 'invalid-email-helper' : null}
-            />
-            {#if errors['email']}
-                <small id="invalid-email-helper">
-                    {errors['email'].join(', ')}
-                </small>
-            {/if}
-        </label>
-        <!-- The rest of the owl -->
+    <label>
+        Title
+        <input name="title" placeholder="title"
+               aria-invalid={!!issues?.["title"]}
+               aria-describedby={issues?.["title"] ? `invalid-title-helper` : null}
+               bind:value={data.title}
+        />
+
+        {#if issues?.['title'] }
+            <small id={`invalid-title-helper`}>
+                {issues['title']
+                        .map(i => i.message)
+                        .join(', ')}
+            </small>
+        {/if}
+    </label>
+
+
+    <input type="submit" value="Create"/>
+</form>
+```sveltehtml
+To enable front-end validation, pass your schema to the useFaurm wrapper
+<script lang="ts">
+    import {createTodo} from "./lib/todos.remote.js";
+    import {useFaurm} from "$lib/index.js";
+    import {createTodoFormSchema} from "./lib/schema.js";
+
+    const form = useFaurm(createTodo, {
+        validate: createTodoFormSchema,
+        initialData: {
+            title: "hello world"
+        },
+    })
+
+    const {data, issues, enhance} = $derived(form);
+    $inspect(data, issues);
+
+</script>
+
+<form {...enhance}>
+    <label>
+        Title
+        <input name="title" placeholder="title"
+               aria-invalid={!!issues?.["title"]}
+               aria-describedby={issues?.["title"] ? `invalid-title-helper` : null}
+               bind:value={data.title}
+        />
+
+        {#if issues?.['title'] }
+            <small id={`invalid-title-helper`}>
+                {issues['title']
+                    .map(i => i.message)
+                    .join(', ')}
+            </small>
+        {/if}
+    </label>
+
+
+    <input type="submit" value="Create"/>
+</form>
+
+
 ```
+
+
 Event handlers allow you to react to your form submissions and their potential results
 ```sveltehtml
 
 <script lang="ts">
-    import {login} from "$lib/auth.remote";
-    import {loginFormSchema} from '$lib/schema.ts'
+    import {createTodo} from "./lib/todos.remote.js";
+    import {useFaurm} from "$lib/index.js";
+    import {createTodoFormSchema} from "./lib/schema.js";
 
-    import {useFaurm} from "faurm";
-
-    const {data, errors, enhance} = useFaurm({
-        validator: loginFormSchema,
+    const form = useFaurm(createTodo, {
         initialData: {
-            email: 'faurm@grauw.fr',
+            title: "hello world"
         },
-        remoteFn: login,
-        onSubmit(){
-            //Front-end validation succeeded 
-            console.log(data, errors)
+        onSubmit(data){
+            console.log(data)
+        },
+        onValidationError(){
+            console.log(issues);
         },
         onSuccess(){
-            // The remote form function returned a success.
-            // Here you might want to show a toast
-            console.log(data, errors)
+            console.log(createTodo.result);
         },
-        onError(){
-            // The remote form function returned validation error.
-            // Here you might want to show a toast or an alert
-            console.log(data, errors)
-        }
-        // The rest of the owl
     })
+
+    const {data, issues, enhance} = $derived(form);
+
+</script>
+
+<form {...enhance}>
+    <label>
+        Title
+        <input name="title" placeholder="title"
+               aria-invalid={!!issues?.["title"]}
+               aria-describedby={issues?.["title"] ? `invalid-title-helper` : null}
+               bind:value={data.title}
+        />
+
+        {#if issues?.['title'] }
+            <small id={`invalid-title-helper`}>
+                {issues['title']
+                        .map(i => i.message)
+                        .join(', ')}
+            </small>
+        {/if}
+    </label>
+
+
+    <input type="submit" value="Create"/>
+</form>
+
+
 ```
 
 The timers object can be used to indicate loading state. You can use it to disable inputs, buttons or show messages !
 ```sveltehtml
 
 <script lang="ts">
-    import {login} from "./faurm.remote.js";
-    import {loginFormSchema} from "./schemas.js";
-    import {useFaurm} from "faurm";
+    import {createTodo} from "./lib/todos.remote.js";
+    import {useFaurm} from "$lib/index.js";
+    import {createTodoFormSchema} from "./lib/schema.js";
 
-    const {enhance, timers} = useFaurm({
-        validator: loginFormSchema,
-        remoteFn: login,
+    const form = useFaurm(createTodo, {
+        validate: createTodoFormSchema,
+        initialData: {
+            title: "hello world"
+        },
+        delay: 500,
+        timeout: 3000
     })
+
+    const {data, issues, enhance, timers} = $derived(form);
+    $inspect(data, issues);
+
 </script>
 
 <form {...enhance}>
-    <!-- The rest of the owl -->
-    <input type="submit" value="Create" disabled={timers.delayed}/>
-    {#if timers.submitting}
-        <!-- Can be flashy if the response is near instant. -->
+    <label>
+        Title
+        <input name="title" placeholder="title"
+               aria-invalid={!!issues?.["title"]}
+               aria-describedby={issues?.["title"] ? `invalid-title-helper` : null}
+               bind:value={data.title}
+        />
+
+        {#if issues?.['title'] }
+            <small id={`invalid-title-helper`}>
+                {issues['title']
+                        .map(i => i.message)
+                        .join(', ')}
+            </small>
+        {/if}
+    </label>
+
+
+    <input type="submit" value="{timers.submitting ? 'loading': 'Create'}"/>
+    {#if timers.delayed}
+        <p>Loading, with a small delay</p>
     {/if}
 
-    {#if timers.delayed}
-        <!-- Triggers after a small delay to indicate loading -->
-        <p>Loading...</p>
-    {/if}
     {#if timers.timeout}
-        <!-- Triggers after a longer delay -->
-        <p>Wow, this is pretty long...</p>
+        <p>It's been 3 seconds already ? </p>
     {/if}
 </form>
+
+
 
 
 ```
 
 ## Features
-- [X] Typesafe backend validation of forms, using [standard schemas](https://github.com/standard-schema/standard-schema)
 - [X] Typesafe form enhancer with callbacks and timers
 - [X] Integrate new Svelte Kit form functionalities ? Client driven single flight mutation could be used 
 - [ ] Extract constraints from our validation
