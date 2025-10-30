@@ -1,24 +1,23 @@
 <script lang="ts">
     import {createTodo} from "./lib/todos.remote.js";
     import {useFaurm} from "$lib/index.js";
-    import {createTodoFormSchema} from "./lib/schema.js";
 
     const form = useFaurm(createTodo, {
         initialData: {
             title: "hello world"
         },
         onSubmit(data){
-            console.log(data)
+            console.log({submitted: data})
         },
         onValidationError(){
-            console.log(fields.issues());
+            console.log({issues: fields.title.issues()});
         },
         onSuccess(){
-            console.log(createTodo.result);
+            console.log({result : createTodo.result});
         },
     })
 
-    const {fields, enhance} = $derived(form);
+    const {fields, enhance} = form;
 
 </script>
 

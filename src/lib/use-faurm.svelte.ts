@@ -55,15 +55,15 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
         this.resetForm = !!resetForm
 
         $effect(() => {
-            if (this.remoteForm.fields.issues()) {
+            if (this.remoteForm.fields.issues() !== undefined) {
                 this.onValidationError();
             }
         })
 
 
         this.onSubmit = onSubmit
-        this.onValidationError = onSuccess
-        this.onSuccess = onValidationError
+        this.onValidationError = onValidationError
+        this.onSuccess = onSuccess
 
         this.updates = updates
     }

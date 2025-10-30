@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {createProfile} from "./lib/todos.remote.js";
+    import {createProfile} from "./lib/profil.remote.js";
     import {useFaurm} from "$lib/use-faurm.svelte.js";
     import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "$lib/components/index.js";
     import {createProfileFormSchema} from "./lib/schema.js";
@@ -57,9 +57,7 @@
                 <Label>Kit</Label>
             {/snippet}
         </Control>
-
-        <Description></Description>
-        <Errors></Errors>
+        <Errors />
     </Fieldset>
 
     <Fieldset {form} name="privacy_options">
@@ -83,8 +81,7 @@
             {/snippet}
         </Control>
 
-        <Description></Description>
-        <Errors></Errors>
+        <Errors />
     </Fieldset>
 
     <Field {form} name="profile_picture">
@@ -94,8 +91,8 @@
                 <input {...props} {...field.as('file')}/>
             {/snippet}
         </Control>
-        <Description></Description>
+        <Description>Please provide a recent picture of yourself</Description>
         <Errors />
     </Field>
-    <input type="submit" value="Create"/>
+    <input type="submit" value="Submit"/>
 </form>
