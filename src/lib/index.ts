@@ -1,7 +1,7 @@
-import { useFaurm } from "./faurm/client.svelte.js";
-import { faurmResponse } from "./faurm/shared.js";
+import { useFaurm } from "./use-faurm.svelte.js";
+import { useId } from "./use-id.js";
 
 export {
     useFaurm,
-    faurmResponse,
+    useId
 }

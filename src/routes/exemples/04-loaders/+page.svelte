@@ -12,25 +12,17 @@
         timeout: 3000
     })
 
-    const {data, issues, enhance, timers} = $derived(form);
-    $inspect(data, issues);
-
+    const {fields, enhance, timers} = $derived(form);
 </script>
 
 <form {...enhance}>
     <label>
         Title
-        <input name="title" placeholder="title"
-               aria-invalid={!!issues?.["title"]}
-               aria-describedby={issues?.["title"] ? `invalid-title-helper` : null}
-               bind:value={data.title}
-        />
-
-        {#if issues?.['title'] }
+        <input {...fields.title.as('text')}
+               aria-describedby={fields.title.issues() ? `invalid-title-helper` : null}/>
+        {#if fields.title.issues() !== undefined }
             <small id={`invalid-title-helper`}>
-                {issues['title']
-                    .map(i => i.message)
-                    .join(', ')}
+                {(fields.title.issues() ?? []).map(i => i.message).join(', ')}
             </small>
         {/if}
     </label>
