@@ -191,11 +191,12 @@ The timers object can be used to indicate loading state. You can use it to disab
 We provide a set of barebone components to help you build accessible forms. 
 ```sveltehtml
 <script lang="ts">
-    import {createProfile} from "./lib/profil.remote.js";
     import {useFaurm} from "faurm";
     import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "faurm";
-    import {createProfileFormSchema} from "./lib/schema.js";
 
+    import {createProfile} from "./lib/profil.remote.js";
+    import {createProfileFormSchema} from "./lib/schema.js";
+    
     const form = useFaurm(createProfile, {
         validate: createProfileFormSchema,
         initialData: {

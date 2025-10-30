@@ -1,8 +1,8 @@
 {
   "name": "faurm",
-  "description": "Faurm brings an opinionated way of handling backend typed validation for your SvelteKit remote form functions.",
+  "description": "Faurm brings a small sets of function and barebone components to help you write clean and accessible forms",
   "author": "Alexandre Payen",
-  "version": "0.0.9",
+  "version": "0.0.92",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run prepack",
