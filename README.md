@@ -42,7 +42,7 @@ Enhance your form using the useFaurm wrapper.
 ```sveltehtml
 <script lang="ts">
     import {createTodo} from "./lib/todos.remote.js";
-    import {useFaurm} from "$lib/index.js";
+    import {useFaurm} from "faurm";
 
     const form = useFaurm(createTodo, {
         initialData: {
@@ -73,7 +73,7 @@ Enhance your form using the useFaurm wrapper.
 To enable front-end validation, pass your schema to the useFaurm wrapper
 <script lang="ts">
     import {createTodo} from "./lib/todos.remote.js";
-    import {useFaurm} from "$lib/index.js";
+    import {useFaurm} from "faurm";
     import {createTodoFormSchema} from "./lib/schema.js";
 
     const form = useFaurm(createTodo, {
@@ -108,7 +108,7 @@ Event handlers allow you to react to your form submissions and their potential r
 ```sveltehtml
 <script lang="ts">
     import {createTodo} from "./lib/todos.remote.js";
-    import {useFaurm} from "$lib/index.js";
+    import {useFaurm} from "faurm";
 
     const form = useFaurm(createTodo, {
         initialData: {
@@ -148,7 +148,7 @@ The timers object can be used to indicate loading state. You can use it to disab
 ```sveltehtml
 <script lang="ts">
     import {createTodo} from "./lib/todos.remote.js";
-    import {useFaurm} from "$lib/index.js";
+    import {useFaurm} from "faurm";
     import {createTodoFormSchema} from "./lib/schema.js";
 
     const form = useFaurm(createTodo, {
@@ -192,8 +192,8 @@ We provide a set of barebone components to help you build accessible forms.
 ```sveltehtml
 <script lang="ts">
     import {createProfile} from "./lib/profil.remote.js";
-    import {useFaurm} from "$lib/use-faurm.svelte.js";
-    import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "$lib/components/index.js";
+    import {useFaurm} from "faurm";
+    import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "faurm";
     import {createProfileFormSchema} from "./lib/schema.js";
 
     const form = useFaurm(createProfile, {
