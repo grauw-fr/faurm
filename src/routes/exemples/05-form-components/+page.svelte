@@ -3,7 +3,6 @@
     import {useFaurm} from "$lib/use-faurm.svelte.js";
     import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "$lib/components/index.js";
     import {createProfileFormSchema} from "./lib/schema.js";
-    import {FormLabel} from "$lib/components/ui/form/index.js";
 
     const form = useFaurm(createProfile, {
         validate: createProfileFormSchema,
@@ -19,7 +18,7 @@
     <Field {form} name="name">
         <Control>
             {#snippet children({props, field})}
-                <FormLabel>What is your name</FormLabel>
+                <Label>What is your name</Label>
                 <input autocomplete="given-name" {...props} {...field.as('text')}/>
             {/snippet}
         </Control>
