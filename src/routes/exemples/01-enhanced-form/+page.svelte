@@ -2,9 +2,7 @@
     import {createTodo} from "./lib/todos.remote.js";
     import {useFaurm} from "$lib/index.js";
 
-    const form = useFaurm(createTodo, {
-
-    })
+    const form = useFaurm(createTodo)
     const {fields, enhance} = $derived(form);
 
 </script>
