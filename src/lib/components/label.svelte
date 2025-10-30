@@ -4,7 +4,7 @@
     import {getFaurmFieldControlContext,} from "$lib/components/use-faurm-field-control.svelte.js";
 
     type FieldControlProps = HTMLAttributes<HTMLLabelElement> & {
-        child?: Snippet<[HTMLAttributes<HTMLLabelElement>]>
+        child?: Snippet<[{ props: HTMLAttributes<HTMLLabelElement> }]>
         children?: Snippet
     }
     const {child, children, ...restProps}: FieldControlProps = $props();
@@ -15,11 +15,12 @@
         for: controlState.id,
         ...restProps,
     }
+    $inspect(mergedProps)
 </script>
 
 
 {#if child}
-    {@render child?.(mergedProps)}
+    {@render child?.({props: mergedProps})}
 {:else}
     <label {...mergedProps}>{@render children?.()}</label>
 {/if}

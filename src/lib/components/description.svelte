@@ -4,8 +4,8 @@
     import {getFaurmFieldContext} from "$lib/components/use-faurm-field.svelte.js";
 
     type FieldDescriptionProps = HTMLAttributes<any> & {
-        child?: Snippet<[props: HTMLAttributes<any>]>
-        children?: Snippet<[props: HTMLAttributes<any>]>
+        child?: Snippet<[{ props: HTMLAttributes<any> }]>
+        children?: Snippet
     }
     const {child, children, ...restProps}: FieldDescriptionProps = $props();
 
@@ -21,7 +21,7 @@
 </script>
 
 {#if child}
-    {@render child(mergedProps)}
+    {@render child({props: mergedProps})}
 {:else}
     <div {...mergedProps}>
         {@render children?.()}

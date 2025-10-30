@@ -5,9 +5,9 @@
     export type FieldSetProps = HTMLAttributes<HTMLLegendElement> & {
         children: Snippet,
     }
-    const {children}: FieldSetProps = $props();
+    const {children, ...restProps}: FieldSetProps = $props();
 </script>
 
-<legend>
+<legend {...restProps}>
     {@render children?.()}
 </legend>
