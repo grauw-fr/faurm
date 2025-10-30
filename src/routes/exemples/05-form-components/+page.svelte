@@ -1,7 +1,7 @@
 <script lang="ts">
     import {createProfile} from "./lib/profil.remote.js";
     import {useFaurm} from "$lib/use-faurm.svelte.js";
-    import {Control, Description, Errors, Field, Fieldset, Label, Legend} from "$lib/components/index.js";
+    import {Control, Description, FieldErrors, Field, Fieldset, Label, Legend} from "$lib/components/index.js";
     import {createProfileFormSchema} from "./lib/schema.js";
 
     const form = useFaurm(createProfile, {
@@ -23,7 +23,7 @@
             {/snippet}
         </Control>
         <Description>Your given birth name</Description>
-        <Errors/>
+        <FieldErrors/>
     </Field>
 
     <Field {form} name="bio">
@@ -34,7 +34,7 @@
             {/snippet}
         </Control>
         <Description>Tell us about yourself</Description>
-        <Errors/>
+        <FieldErrors/>
     </Field>
 
     <Fieldset {form} name="favorite_framework">
@@ -57,7 +57,7 @@
                 <Label>Kit</Label>
             {/snippet}
         </Control>
-        <Errors />
+        <FieldErrors />
     </Fieldset>
 
     <Fieldset {form} name="privacy_options">
@@ -81,7 +81,7 @@
             {/snippet}
         </Control>
 
-        <Errors />
+        <FieldErrors />
     </Fieldset>
 
     <Field {form} name="profile_picture">
@@ -92,7 +92,7 @@
             {/snippet}
         </Control>
         <Description>Please provide a recent picture of yourself</Description>
-        <Errors />
+        <FieldErrors />
     </Field>
     <input type="submit" value="Submit"/>
 </form>

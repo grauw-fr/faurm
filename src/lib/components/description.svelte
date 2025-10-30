@@ -1,13 +1,7 @@
 <script lang="ts">
-    import type {Snippet} from "svelte";
-    import type {HTMLAttributes} from "svelte/elements";
-    import {getFaurmFieldContext} from "$lib/components/use-faurm-field.svelte.js";
+    import {type DescriptionProps, getFaurmFieldContext} from "$lib/index.js";
 
-    type FieldDescriptionProps = HTMLAttributes<any> & {
-        child?: Snippet<[{ props: HTMLAttributes<any> }]>
-        children?: Snippet
-    }
-    const {child, children, ...restProps}: FieldDescriptionProps = $props();
+    const {child, children, ...restProps}: DescriptionProps = $props();
 
     const state = getFaurmFieldContext();
 
@@ -15,9 +9,9 @@
 
     const mergedProps = $derived({
         id: state.describedByDescriptionId,
+        'data-faurm-invalid': state.field.issues() === undefined ? undefined : true,
         ...restProps
     })
-
 </script>
 
 {#if child}

@@ -1,21 +1,17 @@
 <script lang="ts">
-    import type {Snippet} from "svelte";
-    import type {HTMLAttributes} from "svelte/elements";
-    import {getFaurmFieldControlContext,} from "$lib/components/use-faurm-field-control.svelte.js";
+    import type {LabelProps} from '$lib/types.js'
+    import {getFaurmFieldContext, getFaurmFieldControlContext} from "$lib/index.js";
 
-    type FieldControlProps = HTMLAttributes<HTMLLabelElement> & {
-        child?: Snippet<[{ props: HTMLAttributes<HTMLLabelElement> }]>
-        children?: Snippet
-    }
-    const {child, children, ...restProps}: FieldControlProps = $props();
+    const {child, children, ...restProps}: LabelProps = $props();
 
+    const state = getFaurmFieldContext();
     const controlState = getFaurmFieldControlContext()
 
-    const mergedProps = {
+    const mergedProps = $derived({
         for: controlState.id,
+        'data-faurm-invalid': state.field.issues() === undefined ? undefined : true,
         ...restProps,
-    }
-    $inspect(mergedProps)
+    })
 </script>
 
 

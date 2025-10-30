@@ -1,13 +1,21 @@
 <script lang="ts">
-    import type {Snippet} from "svelte";
-    import type {HTMLAttributes} from "svelte/elements";
+    import type {LegendProps} from "$lib/types.js";
+    import {getFaurmFieldContext} from "$lib/index.js";
 
-    export type FieldSetProps = HTMLAttributes<HTMLLegendElement> & {
-        children: Snippet,
-    }
-    const {children, ...restProps}: FieldSetProps = $props();
+    const {children, child, ...restProps}: LegendProps = $props();
+    const state = getFaurmFieldContext();
+
+    const mergedProps = $derived({
+        'data-faurm-invalid': state.field.issues() === undefined ? undefined : true,
+        ...restProps
+    });
+
 </script>
 
-<legend {...restProps}>
-    {@render children?.()}
-</legend>
+{#if child}
+    {@render child({props: mergedProps})}
+{:else}
+    <legend {...mergedProps}>
+        {@render children?.()}
+    </legend>
+{/if}

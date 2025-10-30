@@ -1,17 +1,12 @@
 <script lang="ts">
-    import type {Snippet} from "svelte";
-    import {getFaurmFieldContext} from "$lib/components/use-faurm-field.svelte.js";
     import type {HTMLAttributes} from "svelte/elements";
-    import {setFaurmFieldControlContext} from "$lib/components/use-faurm-field-control.svelte.js";
+    import type {FieldControlProps} from "$lib/types.js";
+    import {getFaurmFieldContext, setFaurmFieldControlContext} from "$lib/index.js";
 
     const state = getFaurmFieldContext();
     const controlState = setFaurmFieldControlContext(state.id)
 
-    type FieldControlProps = {
-        children: Snippet<[{ props: any, field: typeof state.field }]>
-    }
-
-    const {children, ...restProps}: FieldControlProps = $props();
+    const {children, ...restProps}: FieldControlProps<typeof state.field> = $props();
 
     const describedBy = $derived.by(() => {
         if (!state.hasDescription && !state.hasErrors){
