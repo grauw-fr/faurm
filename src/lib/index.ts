@@ -3,5 +3,7 @@ import { useId } from "./use-id.js";
 
 export {
     useFaurm,
-    useId
+    useId,
 }
+export type * from './types.js'
+export * from './components/index.js'
