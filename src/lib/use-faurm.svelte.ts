@@ -93,8 +93,10 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
                 form.reset();
             }
 
-            this.onSuccess()
 
+            if (this.remoteForm.fields.issues()?.length === undefined){
+                this.onSuccess()
+            }
         } finally {
             this.timers.submitting = false
             this.timers.delayed = false
