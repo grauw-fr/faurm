@@ -2,7 +2,7 @@
   "name": "faurm",
   "description": "Faurm brings a small sets of function and barebone components to help you write clean and accessible forms",
   "author": "Alexandre Payen",
-  "version": "0.0.92",
+  "version": "0.0.93",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run prepack",
