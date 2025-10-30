@@ -3,9 +3,7 @@
     import {useFaurm} from "$lib/index.js";
 
     const form = useFaurm(createTodo, {
-        initialData: {
-            title: "A first todo"
-        },
+
     })
     const {fields, enhance} = $derived(form);
 

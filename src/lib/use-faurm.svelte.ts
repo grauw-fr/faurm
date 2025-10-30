@@ -4,7 +4,7 @@ import type {UseFaurmOpts} from "$lib/types.js";
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
     form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
-    opts: UseFaurmOpts<RFInput>
+    opts: UseFaurmOpts<RFInput> = {}
 ) => {
     return new FaurmContext<RFInput, RFOutput>(form, opts);
 }
