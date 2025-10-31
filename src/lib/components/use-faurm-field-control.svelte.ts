@@ -1,5 +1,5 @@
 import {getContext, setContext} from "svelte";
-import {useId} from "$lib/use-id.js";
+import {useId} from "../use-id.js";
 
 export const FAURM_FIELD_CONTROL_KEY = Symbol("FAURM_FIELD_CONTROL_KEY")
 export const setFaurmFieldControlContext = (id: string) => {

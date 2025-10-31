@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type {LegendProps} from "$lib/types.js";
-    import {getFaurmFieldContext} from "$lib/index.js";
+    import type {LegendProps} from "../types.js";
+    import {getFaurmFieldContext} from "../index.js";
 
     const {children, child, ...restProps}: LegendProps = $props();
     const state = getFaurmFieldContext();

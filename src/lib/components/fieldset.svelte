@@ -1,7 +1,7 @@
 <script lang="ts" generics="TContext extends FaurmContext<any, any>">
-    import type {FaurmContext} from "$lib/use-faurm.svelte.js"
-    import {Field} from "$lib/components/index.js";
-    import type {FieldSetProps} from "$lib/types.js";
+    import type {FaurmContext} from "../use-faurm.svelte.js"
+    import type {FieldSetProps} from "../types.js";
+    import {Field} from "../components/index.js";
 
     const {form, name, child, children, ...restProps}: FieldSetProps<TContext> = $props();
 </script>

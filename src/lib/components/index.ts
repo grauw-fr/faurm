@@ -6,7 +6,7 @@ import Label from './label.svelte'
 import Description from './description.svelte'
 import FieldErrors from './field-errors.svelte'
 import {setFaurmFieldContext, getFaurmFieldContext} from './use-faurm-field.svelte.js'
-import {setFaurmFieldControlContext, getFaurmFieldControlContext} from "$lib/components/use-faurm-field-control.svelte.js";
+import {setFaurmFieldControlContext, getFaurmFieldControlContext} from "../components/use-faurm-field-control.svelte.js";
 export {
     Field,
     Fieldset,

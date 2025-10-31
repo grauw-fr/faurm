@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type {LabelProps} from '$lib/types.js'
-    import {getFaurmFieldContext, getFaurmFieldControlContext} from "$lib/index.js";
+    import type {LabelProps} from '../types.js'
+    import {getFaurmFieldContext, getFaurmFieldControlContext} from "../index.js";
 
     const {child, children, ...restProps}: LabelProps = $props();
 

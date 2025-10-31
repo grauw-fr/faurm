@@ -1,7 +1,7 @@
 <script lang="ts">
     import type {HTMLAttributes} from "svelte/elements";
-    import type {FieldControlProps} from "$lib/types.js";
-    import {getFaurmFieldContext, setFaurmFieldControlContext} from "$lib/index.js";
+    import type {FieldControlProps} from "../types.js";
+    import {getFaurmFieldContext, setFaurmFieldControlContext} from "../index.js";
 
     const state = getFaurmFieldContext();
     const controlState = setFaurmFieldControlContext(state.id)

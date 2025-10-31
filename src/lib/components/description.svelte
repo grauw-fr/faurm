@@ -1,5 +1,6 @@
 <script lang="ts">
-    import {type DescriptionProps, getFaurmFieldContext} from "$lib/index.js";
+    import type {DescriptionProps} from "../types.js";
+    import {getFaurmFieldContext} from "../index.js";
 
     const {child, children, ...restProps}: DescriptionProps = $props();
 

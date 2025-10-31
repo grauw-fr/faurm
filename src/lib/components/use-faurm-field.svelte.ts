@@ -34,9 +34,4 @@ class FaurmFieldContext {
         this.describedByDescriptionId = `description-${this.id}`
         this.describedByErrorsId = `errors-${this.id}`
     }
-
-    get issues() {
-        return [];
-        return this.field.issues() ?? []
-    }
 }

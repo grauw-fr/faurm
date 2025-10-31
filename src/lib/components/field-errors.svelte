@@ -1,6 +1,6 @@
 <script lang="ts">
-    import type {FieldErrorsProps} from "$lib/index.js";
-    import {getFaurmFieldContext} from "$lib/index.js";
+    import type {FieldErrorsProps} from "../index.js";
+    import {getFaurmFieldContext} from "../index.js";
 
     const state = getFaurmFieldContext();
 

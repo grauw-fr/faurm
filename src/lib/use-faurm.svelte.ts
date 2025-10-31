@@ -1,6 +1,6 @@
 import type {RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
 import type {StandardSchemaV1} from "@standard-schema/spec";
-import type {UseFaurmOpts} from "$lib/types.js";
+import type {UseFaurmOpts} from "./types.js";
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
     form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,

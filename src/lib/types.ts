@@ -1,9 +1,9 @@
 import type {RemoteFormInput, RemoteFormIssue, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
 import type {StandardSchemaV1} from "@standard-schema/spec";
-import type {FaurmContext} from "$lib/use-faurm.svelte.js";
 import type {Snippet} from "svelte";
 import type {HTMLAttributes, HTMLFieldsetAttributes} from "svelte/elements";
 
+import type {FaurmContext} from "./use-faurm.svelte.js";
 
 export type UseFaurmOpts<RFInput extends RemoteFormInput> = {
     initialData?: Partial<RFInput>
@@ -22,7 +22,7 @@ export type UseFaurmOpts<RFInput extends RemoteFormInput> = {
 type ExtractInput<T> = T extends FaurmContext<infer Input, any> ? Input : never;
 
 export type WithChild<T extends unknown[]> = {
-    child: Snippet<T>
+    child?: Snippet<T>
 }
 
 export type FieldProps<TFaurmContext extends FaurmContext<any, any>> = {
@@ -49,16 +49,18 @@ export type LegendProps =
     HTMLAttributes<HTMLLegendElement>
     & WithChild<[{ props: HTMLAttributes<HTMLLegendElement> }]>
     & {
-    children: Snippet,
+    children?: Snippet,
 }
 
-export type LabelProps = HTMLAttributes<HTMLLabelElement> & {
-    child?: Snippet<[{ props: HTMLAttributes<HTMLLabelElement> }]>
+export type LabelProps = HTMLAttributes<HTMLLabelElement>
+    & WithChild<[{ props: HTMLAttributes<HTMLLabelElement> }]>
+    & {
     children?: Snippet
 }
 
-export type DescriptionProps = HTMLAttributes<HTMLElement> & {
-    child?: Snippet<[{ props: HTMLAttributes<HTMLElement> }]>
+export type DescriptionProps = HTMLAttributes<HTMLElement>
+    & WithChild<[{ props: HTMLAttributes<HTMLElement> }]>
+    & {
     children?: Snippet
 }
 
