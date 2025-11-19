@@ -12,10 +12,12 @@
         delay: 500,
         timeout: 3000
     })
+
+    const {fields} = form;
 </script>
 
 <form {...form.enhance} enctype="multipart/form-data">
-    <Field {form} name="name">
+    <Field field={fields.name}>
         <Control>
             {#snippet children({props, field})}
                 <Label>What is your name</Label>
@@ -26,7 +28,7 @@
         <FieldErrors/>
     </Field>
 
-    <Field {form} name="bio">
+    <Field field={fields.bio}>
         <Control>
             {#snippet children({props, field})}
                 <Label>Biography</Label>
@@ -37,7 +39,7 @@
         <FieldErrors/>
     </Field>
 
-    <Fieldset {form} name="favorite_framework">
+    <Fieldset field={fields.favorite_framework}>
         <Legend>What is your favorite framework</Legend>
         <Control>
             {#snippet children({props, field})}
@@ -60,7 +62,7 @@
         <FieldErrors />
     </Fieldset>
 
-    <Fieldset {form} name="privacy_options">
+    <Fieldset field={fields.privacy_options}>
         <Legend>I agree to</Legend>
         <Control>
             {#snippet children({props, field})}
@@ -84,7 +86,7 @@
         <FieldErrors />
     </Fieldset>
 
-    <Field {form} name="profile_picture">
+    <Field field={fields.profile_picture}>
         <Control>
             {#snippet children({props, field})}
                 <Label>Profile Picture</Label>

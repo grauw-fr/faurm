@@ -1,4 +1,4 @@
-import type {RemoteFormInput, RemoteFormIssue, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
+import type {RemoteFormField, RemoteFormInput, RemoteFormIssue, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
 import type {StandardSchemaV1} from "@standard-schema/spec";
 import type {Snippet} from "svelte";
 import type {HTMLAttributes, HTMLFieldsetAttributes} from "svelte/elements";
@@ -19,23 +19,21 @@ export type UseFaurmOpts<RFInput extends RemoteFormInput> = {
     updates?: () => Array<RemoteQuery<any> | RemoteQueryOverride>
 }
 
-type ExtractInput<T> = T extends FaurmContext<infer Input, any> ? Input : never;
 
 export type WithChild<T extends unknown[]> = {
     child?: Snippet<T>
 }
 
-export type FieldProps<TFaurmContext extends FaurmContext<any, any>> = {
-    form: TFaurmContext
-    name: keyof ExtractInput<TFaurmContext> & string;
+export type FieldProps = {
+    field: RemoteFormField<any>
     id?: string,
     children?: Snippet
 }
 
 
-export type FieldSetProps<TFaurmContext extends FaurmContext<any, any>> =
+export type FieldSetProps =
     Omit<HTMLFieldsetAttributes, 'form'>
-    & FieldProps<TFaurmContext>
+    & FieldProps
     & WithChild<[{ props: HTMLFieldsetAttributes }]>
     & {
     children: Snippet,
