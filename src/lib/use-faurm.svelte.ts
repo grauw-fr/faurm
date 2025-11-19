@@ -1,6 +1,7 @@
 import type {RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
 import type {StandardSchemaV1} from "@standard-schema/spec";
 import type {UseFaurmOpts} from "./types.js";
+import {untrack} from "svelte";
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
     form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
@@ -27,6 +28,8 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
     onValidationError: () => void
 
     private readonly updates: () => Array<RemoteQuery<any> | RemoteQueryOverride>
+    private readonly flagState: { pristine: boolean; dirty: boolean };
+    private initialData: Partial<RFInput>;
 
     constructor(
         form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
@@ -43,7 +46,7 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
         }: UseFaurmOpts<RFInput>
     ) {
         this.remoteForm = form;
-
+        this.initialData = $state(initialData);
         this.remoteForm.fields.set(initialData)
 
         this.validate = validate
@@ -66,6 +69,32 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
         this.onSuccess = onSuccess
 
         this.updates = updates
+
+        $effect(() => {
+            if (Object.keys(this.initialData).length === 0){
+                console.log({
+                    when: "data has no keys, its a reset it seems",
+                    f: this.fields.value(),
+                    i: this.initialData
+                });
+                this.initialData = untrack(() => this.fields.value());
+            }
+        })
+
+        this.flagState = $derived.by(() => {
+            //TODO: Replace this with a sturdier method if it sucks
+            const hasBeenModified = JSON.stringify(this.fields.value()) !== JSON.stringify(this.initialData);
+            console.log({
+                f: JSON.stringify(this.fields.value()),
+                i: JSON.stringify(this.initialData)
+            });
+            return {
+                pristine: !hasBeenModified,
+                dirty: hasBeenModified,
+            }
+        });
+
+        $inspect(this.flags);
     }
 
 
@@ -89,12 +118,14 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
 
             await submit().updates(...this.updates());
 
-            if (this.resetForm) {
-                form.reset();
-            }
-
-
-            if (this.remoteForm.fields.issues()?.length === undefined){
+            if (this.remoteForm.fields.issues()?.length === undefined) {
+                if (this.resetForm) {
+                    form.reset();
+                    this.fields.set({})
+                    this.initialData = {};
+                }else{
+                    this.initialData = data
+                }
                 this.onSuccess()
             }
         } finally {
@@ -113,5 +144,9 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
 
     get results() {
         return this.remoteForm.result
+    }
+
+    flags(){
+        return this.flagState
     }
 }

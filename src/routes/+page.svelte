@@ -11,4 +11,5 @@
     <li><a href={resolve('/exemples/05-form-components')}>Form Components</a></li>
     <li><a href={resolve('/exemples/06-nested-components')}>Nested Form Components</a></li>
     <li><a href={resolve('/exemples/07-reactivity')}>Reactivity</a></li>
+    <li><a href={resolve('/exemples/08-form-flags')}>Form Flags (dirty/pristine)</a></li>
 </ul>
