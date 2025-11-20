@@ -12,14 +12,13 @@
         },
     })
 
-    const {fields} = form
-    $inspect(form.flags())
+    const {fields, flags} = form
 </script>
 
-<pre>{JSON.stringify(form.flags(), null, 2)}</pre>
+<pre>{JSON.stringify(flags.value(), null, 2)}</pre>
 
-<svelte:window onbeforeunload={(e) => form.flags().dirty && e.preventDefault()} />
-{#if form.flags().dirty}
+<svelte:window onbeforeunload={(e) => flags.value().dirty && e.preventDefault()} />
+{#if flags.value().dirty}
     <h2>The form has been modified</h2>
 {/if}
 

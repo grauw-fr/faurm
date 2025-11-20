@@ -3,7 +3,7 @@
     import type {FieldSetProps} from "../types.js";
     import {Field} from "../components/index.js";
 
-    const {field, child, children, ...restProps}: FieldSetProps<TFieldValue> = $props();
+    const {field, child, children, ...restProps}: FieldSetProps = $props();
 </script>
 
 <Field {field}>

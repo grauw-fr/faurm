@@ -1,7 +1,7 @@
 import type {RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
 import type {StandardSchemaV1} from "@standard-schema/spec";
 import type {UseFaurmOpts} from "./types.js";
-import {untrack} from "svelte";
+import {tick} from "svelte";
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
     form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
@@ -28,8 +28,10 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
     onValidationError: () => void
 
     private readonly updates: () => Array<RemoteQuery<any> | RemoteQueryOverride>
-    private readonly flagState: { pristine: boolean; dirty: boolean };
-    private initialData: Partial<RFInput>;
+
+
+    private flagsState: { pristine: boolean; dirty: boolean; } = $state({dirty: false, pristine: true});
+    private snapshotState: Partial<RFInput> = $state({});
 
     constructor(
         form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
@@ -45,16 +47,18 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
             updates = () => []
         }: UseFaurmOpts<RFInput>
     ) {
-        this.remoteForm = form;
-        this.initialData = $state(initialData);
-        this.remoteForm.fields.set(initialData)
 
+        this.remoteForm = form;
         this.validate = validate
+
+        this.remoteForm.fields.set(initialData)
+        this.snapshot.set($state.snapshot(this.remoteForm.fields.value()));
 
         this.timersConfig = {
             delay,
             timeout
         }
+
         this.resetForm = !!resetForm
 
         $effect(() => {
@@ -63,7 +67,6 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
             }
         })
 
-
         this.onSubmit = onSubmit
         this.onValidationError = onValidationError
         this.onSuccess = onSuccess
@@ -71,30 +74,12 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
         this.updates = updates
 
         $effect(() => {
-            if (Object.keys(this.initialData).length === 0){
-                console.log({
-                    when: "data has no keys, its a reset it seems",
-                    f: this.fields.value(),
-                    i: this.initialData
-                });
-                this.initialData = untrack(() => this.fields.value());
-            }
-        })
-
-        this.flagState = $derived.by(() => {
-            //TODO: Replace this with a sturdier method if it sucks
-            const hasBeenModified = JSON.stringify(this.fields.value()) !== JSON.stringify(this.initialData);
-            console.log({
-                f: JSON.stringify(this.fields.value()),
-                i: JSON.stringify(this.initialData)
-            });
-            return {
+            const hasBeenModified = JSON.stringify(this.fields.value()) !== JSON.stringify(this.snapshot.value());
+            this.flags.set({
                 pristine: !hasBeenModified,
                 dirty: hasBeenModified,
-            }
-        });
-
-        $inspect(this.flags);
+            })
+        })
     }
 
 
@@ -121,11 +106,10 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
             if (this.remoteForm.fields.issues()?.length === undefined) {
                 if (this.resetForm) {
                     form.reset();
-                    this.fields.set({})
-                    this.initialData = {};
-                }else{
-                    this.initialData = data
+                    await tick();
+                    this.snapshot.set($state.snapshot(this.remoteForm.fields.value()))
                 }
+
                 this.onSuccess()
             }
         } finally {
@@ -142,11 +126,29 @@ export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
         return this.remoteForm.fields
     }
 
-    get results() {
+    get results(): RFOutput | undefined {
         return this.remoteForm.result
     }
 
-    flags(){
-        return this.flagState
+    get flags() {
+        return {
+            value: () => {
+                return this.flagsState
+            },
+            set: (flags: typeof this.flagsState) => {
+                this.flagsState = flags
+            },
+        }
+    }
+
+    get snapshot() {
+        return {
+            value: () => {
+                return this.snapshotState
+            },
+            set: (snapshot: typeof this.snapshotState) => {
+                this.snapshotState = snapshot
+            },
+        }
     }
 }
