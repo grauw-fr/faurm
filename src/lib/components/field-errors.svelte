@@ -1,25 +1,27 @@
 <script lang="ts">
-    import type {FieldErrorsProps} from "../index.js";
-    import {getFaurmFieldContext} from "../index.js";
+	import type { FieldErrorsProps } from '../index.js';
+	import { getFaurmFieldContext } from '../index.js';
 
-    const state = getFaurmFieldContext();
+	const state = getFaurmFieldContext();
 
-    state.hasErrors = true
+	state.hasErrors = true;
 
-    const {children, ...restProps}: FieldErrorsProps = $props();
+	const { children, ...restProps }: FieldErrorsProps = $props();
 
-    const mergedProps = {
-        id: state.describedByErrorsId,
-        ...restProps,
-    }
+	const mergedProps = {
+		id: state.describedByErrorsId,
+		...restProps
+	};
 </script>
 
 {#if children}
-    {@render children({issues: state.field.issues(), props: mergedProps})}
-{:else}
-    {#if state.field.issues() !== undefined}
-        <div {...mergedProps}>
-            {state.field.issues()?.map(m => m.message).join(', ')}
-        </div>
-    {/if}
+	{@render children({ issues: state.field().issues(), props: mergedProps })}
+{:else if state.field().issues() !== undefined}
+	<div {...mergedProps}>
+		{state
+			.field()
+			.issues()
+			?.map((m) => m.message)
+			.join(', ')}
+	</div>
 {/if}

@@ -1,154 +1,168 @@
-import type {RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride} from "@sveltejs/kit";
-import type {StandardSchemaV1} from "@standard-schema/spec";
-import type {UseFaurmOpts} from "./types.js";
-import {tick} from "svelte";
+import type { RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
+import type { StandardSchemaV1 } from '@standard-schema/spec';
+import type { UseFaurmOpts } from './types.js';
+import { tick } from 'svelte';
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
-    form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
-    opts: UseFaurmOpts<RFInput> = {}
+	form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
+	opts: UseFaurmOpts<RFInput> = {}
 ) => {
-    return new FaurmContext<RFInput, RFOutput>(form, opts);
-}
+	return new FaurmContext<RFInput, RFOutput>(form, opts);
+};
 
 export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
-    private readonly remoteForm: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>;
-    private readonly validate: StandardSchemaV1<RFInput> | undefined;
+	private readonly remoteForm:
+		| RemoteForm<RFInput, RFOutput>
+		| Omit<RemoteForm<RFInput, RFOutput>, 'for'>;
+	private readonly validate: StandardSchemaV1<RFInput> | undefined;
 
-    private readonly resetForm: boolean;
+	private readonly resetForm: boolean;
 
-    private readonly timersConfig: {
-        delay: number,
-        timeout: number
-    }
+	private readonly timersConfig: {
+		delay: number;
+		timeout: number;
+	};
 
-    timers = $state({submitting: false, delayed: false, timeout: false})
+	timers = $state({ submitting: false, delayed: false, timeout: false });
 
-    onSubmit: (data: RFInput) => void
-    onSuccess: () => void
-    onValidationError: () => void
+	onSubmit: (data: RFInput) => void;
+	onSuccess: () => void;
+	onValidationError: () => void;
 
-    private readonly updates: () => Array<RemoteQuery<any> | RemoteQueryOverride>
+	private readonly updates: () => Array<RemoteQuery<any> | RemoteQueryOverride>;
 
+	private flagsState: { pristine: boolean; dirty: boolean } = $state({
+		dirty: false,
+		pristine: true
+	});
+	private snapshotState: Partial<RFInput> = $state({});
 
-    private flagsState: { pristine: boolean; dirty: boolean; } = $state({dirty: false, pristine: true});
-    private snapshotState: Partial<RFInput> = $state({});
+	constructor(
+		form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
+		{
+			initialData = {},
+			validate,
+			delay = 500,
+			timeout = 8000,
+			resetForm = true,
+			onSubmit = () => null,
+			onSuccess = () => null,
+			onValidationError = () => null,
+			updates = () => []
+		}: UseFaurmOpts<RFInput>
+	) {
+		this.remoteForm = form;
+		this.validate = validate;
 
-    constructor(
-        form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
-        {
-            initialData = {},
-            validate,
-            delay = 500,
-            timeout = 8000,
-            resetForm = true,
-            onSubmit = () => null,
-            onSuccess = () => null,
-            onValidationError = () => null,
-            updates = () => []
-        }: UseFaurmOpts<RFInput>
-    ) {
+		//TODO: This could maybe optimized to avoid casting as field props, since they should share the same type
+		this.remoteForm.fields.set(initialData as (string | number | boolean | File) & RFInput & {});
+		this.snapshot.set($state.snapshot(this.remoteForm.fields.value()));
 
-        this.remoteForm = form;
-        this.validate = validate
+		this.timersConfig = {
+			delay,
+			timeout
+		};
 
-        this.remoteForm.fields.set(initialData)
-        this.snapshot.set($state.snapshot(this.remoteForm.fields.value()));
+		this.resetForm = !!resetForm;
 
-        this.timersConfig = {
-            delay,
-            timeout
-        }
+		$effect(() => {
+			if (this.remoteForm.fields.issues() !== undefined) {
+				this.onValidationError();
+			}
+		});
 
-        this.resetForm = !!resetForm
+		this.onSubmit = onSubmit;
+		this.onValidationError = onValidationError;
+		this.onSuccess = onSuccess;
 
-        $effect(() => {
-            if (this.remoteForm.fields.issues() !== undefined) {
-                this.onValidationError();
-            }
-        })
+		this.updates = updates;
 
-        this.onSubmit = onSubmit
-        this.onValidationError = onValidationError
-        this.onSuccess = onSuccess
+		$effect(() => {
+			const hasBeenModified =
+				JSON.stringify(this.fields.value()) !== JSON.stringify(this.snapshot.value());
+			this.flags.set({
+				pristine: !hasBeenModified,
+				dirty: hasBeenModified
+			});
+		});
+	}
 
-        this.updates = updates
+	get enhance() {
+		if (this.validate) {
+			return this.remoteForm.preflight(this.validate).enhance(this.enhancer);
+		}
+		return this.remoteForm.enhance(this.enhancer);
+	}
 
-        $effect(() => {
-            const hasBeenModified = JSON.stringify(this.fields.value()) !== JSON.stringify(this.snapshot.value());
-            this.flags.set({
-                pristine: !hasBeenModified,
-                dirty: hasBeenModified,
-            })
-        })
-    }
+	private enhancer: Parameters<RemoteForm<RFInput, RFOutput>['enhance']>[0] = async ({
+		form,
+		data,
+		submit
+	}) => {
+		let timersDelayInterval;
+		let timersTimeoutInterval;
 
+		try {
+			this.timers.submitting = true;
+			timersDelayInterval = setInterval(
+				() => (this.timers.delayed = true),
+				this.timersConfig.delay
+			);
+			timersTimeoutInterval = setInterval(
+				() => (this.timers.timeout = true),
+				this.timersConfig.timeout
+			);
 
-    get enhance() {
-        if (this.validate) {
-            return this.remoteForm.preflight(this.validate).enhance(this.enhancer);
-        }
-        return this.remoteForm.enhance(this.enhancer);
-    }
+			this.onSubmit(data);
 
-    private enhancer: Parameters<RemoteForm<RFInput, RFOutput>["enhance"]>[0] = async ({form, data, submit}) => {
-        let timersDelayInterval;
-        let timersTimeoutInterval;
+			await submit().updates(...this.updates());
 
-        try {
-            this.timers.submitting = true;
-            timersDelayInterval = setInterval(() => this.timers.delayed = true, this.timersConfig.delay)
-            timersTimeoutInterval = setInterval(() => this.timers.timeout = true, this.timersConfig.timeout)
+			if (this.remoteForm.fields.issues()?.length === undefined) {
+				if (this.resetForm) {
+					form.reset();
+					await tick();
+					this.snapshot.set($state.snapshot(this.remoteForm.fields.value()));
+				}
 
-            this.onSubmit(data);
+				this.onSuccess();
+			}
+		} finally {
+			this.timers.submitting = false;
+			this.timers.delayed = false;
+			this.timers.timeout = false;
 
-            await submit().updates(...this.updates());
+			clearInterval(timersDelayInterval);
+			clearInterval(timersTimeoutInterval);
+		}
+	};
 
-            if (this.remoteForm.fields.issues()?.length === undefined) {
-                if (this.resetForm) {
-                    form.reset();
-                    await tick();
-                    this.snapshot.set($state.snapshot(this.remoteForm.fields.value()))
-                }
+	get fields() {
+		return this.remoteForm.fields;
+	}
 
-                this.onSuccess()
-            }
-        } finally {
-            this.timers.submitting = false
-            this.timers.delayed = false
-            this.timers.timeout = false
+	get results(): RFOutput | undefined {
+		return this.remoteForm.result;
+	}
 
-            clearInterval(timersDelayInterval)
-            clearInterval(timersTimeoutInterval)
-        }
-    }
+	get flags() {
+		return {
+			value: () => {
+				return this.flagsState;
+			},
+			set: (flags: typeof this.flagsState) => {
+				this.flagsState = flags;
+			}
+		};
+	}
 
-    get fields() {
-        return this.remoteForm.fields
-    }
-
-    get results(): RFOutput | undefined {
-        return this.remoteForm.result
-    }
-
-    get flags() {
-        return {
-            value: () => {
-                return this.flagsState
-            },
-            set: (flags: typeof this.flagsState) => {
-                this.flagsState = flags
-            },
-        }
-    }
-
-    get snapshot() {
-        return {
-            value: () => {
-                return this.snapshotState
-            },
-            set: (snapshot: typeof this.snapshotState) => {
-                this.snapshotState = snapshot
-            },
-        }
-    }
+	get snapshot() {
+		return {
+			value: () => {
+				return this.snapshotState;
+			},
+			set: (snapshot: typeof this.snapshotState) => {
+				this.snapshotState = snapshot;
+			}
+		};
+	}
 }
