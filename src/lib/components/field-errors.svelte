@@ -8,10 +8,10 @@
 
 	const { children, ...restProps }: FieldErrorsProps = $props();
 
-	const mergedProps = {
+	const mergedProps = $derived({
 		id: state.describedByErrorsId,
 		...restProps
-	};
+	});
 </script>
 
 {#if children}

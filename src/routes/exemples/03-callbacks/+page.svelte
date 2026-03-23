@@ -1,37 +1,23 @@
 <script lang="ts">
-    import {createTodo} from "./lib/todos.remote.js";
-    import {useFaurm} from "$lib/index.js";
+	import { createTodos } from './lib/todos.remote.js';
+	import { useFaurm } from '$lib/index.js';
 
-    const form = useFaurm(createTodo, {
-        initialData: {
-            title: "hello world"
-        },
-        onSubmit(data){
-            console.log({submitted: data})
-        },
-        onValidationError(){
-            console.log({issues: fields.title.issues()});
-        },
-        onSuccess(){
-            console.log({result : createTodo.result});
-        },
-    })
+	const form = useFaurm(createTodos, {
+		initialData: {
+			title: 'hello world'
+		},
+		onSubmit(data) {
+			console.log({ submitted: data });
+		},
+		onValidationError() {
+			console.log({ issues: fields.title.issues() });
+		},
+		onSuccess() {
+			console.log({ result: createTodos.result });
+		}
+	});
 
-    const {fields, enhance} = form;
-
+	const { fields, enhance } = form;
 </script>
 
-<form {...enhance}>
-    <label>
-        Title
-        <input {...fields.title.as('text')}
-               aria-describedby={fields.title.issues() ? `invalid-title-helper` : null}/>
-        {#if fields.title.issues() !== undefined }
-            <small id={`invalid-title-helper`}>
-                {(fields.title.issues() ?? []).map(i => i.message).join(', ')}
-            </small>
-        {/if}
-    </label>
-    <input type="submit" value="Create"/>
-</form>
-
+<form {...enhance}></form>

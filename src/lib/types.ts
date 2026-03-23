@@ -1,4 +1,5 @@
 import type {
+	RemoteForm,
 	RemoteFormField,
 	RemoteFormInput,
 	RemoteFormIssue,
@@ -8,6 +9,7 @@ import type {
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { Snippet } from 'svelte';
 import type { HTMLAttributes, HTMLFieldsetAttributes } from 'svelte/elements';
+import type { FaurmContext } from './use-faurm.svelte.js';
 
 type FaurmPrimitive<T> = Omit<T, 'style' | 'id' | 'children'> & { id?: string };
 
@@ -24,6 +26,13 @@ export type UseFaurmOpts<RFInput extends RemoteFormInput> = {
 	onValidationError?: () => void;
 	updates?: () => Array<RemoteQuery<any> | RemoteQueryOverride>;
 };
+
+export type FaurmRemoteForm<RFInput extends RemoteFormInput, RFOutput> =
+	| RemoteForm<RFInput, RFOutput>
+	| Omit<RemoteForm<RFInput, RFOutput>, 'for'>;
+
+export type InferFaurmContext<T> =
+	T extends FaurmRemoteForm<infer I, infer O> ? FaurmContext<I, O> : never;
 
 export type WithChild<T extends unknown[]> = {
 	child?: Snippet<T>;

@@ -1,19 +1,17 @@
 import type { RemoteForm, RemoteFormInput, RemoteQuery, RemoteQueryOverride } from '@sveltejs/kit';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import type { UseFaurmOpts } from './types.js';
+import type { FaurmRemoteForm, UseFaurmOpts } from './types.js';
 import { tick } from 'svelte';
 
 export const useFaurm = <RFInput extends RemoteFormInput, RFOutput>(
-	form: RemoteForm<RFInput, RFOutput> | Omit<RemoteForm<RFInput, RFOutput>, 'for'>,
+	form: FaurmRemoteForm<RFInput, RFOutput>,
 	opts: UseFaurmOpts<RFInput> = {}
 ) => {
 	return new FaurmContext<RFInput, RFOutput>(form, opts);
 };
 
 export class FaurmContext<RFInput extends RemoteFormInput, RFOutput> {
-	private readonly remoteForm:
-		| RemoteForm<RFInput, RFOutput>
-		| Omit<RemoteForm<RFInput, RFOutput>, 'for'>;
+	private readonly remoteForm: FaurmRemoteForm<RFInput, RFOutput>;
 	private readonly validate: StandardSchemaV1<RFInput> | undefined;
 
 	private readonly resetForm: boolean;
